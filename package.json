@@ -1,5 +1,5 @@
 {
-  "name": "@scalable/sentinel-js",
+  "name": "@scalable-labs/sentineljs",
   "version": "1.0.0",
   "description": "Frontend error monitoring client for Sentinel by Scalable Labs",
   "main": "dist/index.js",
