@@ -1,0 +1,47 @@
+{
+  "name": "@scalable/sentinel-js",
+  "version": "1.0.0",
+  "description": "Frontend error monitoring client for Sentinel by Scalable Labs",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "prepublishOnly": "npm run build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "sentinel",
+    "error-monitoring",
+    "error-tracking",
+    "frontend",
+    "observability",
+    "scalable",
+    "monitoring",
+    "analytics",
+    "fetch",
+    "axios"
+  ],
+  "author": "Scalable Labs",
+  "license": "MIT",
+  "homepage": "https://github.com/scalabledk/sentinel-js#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/scalabledk/sentinel-js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/scalabledk/sentinel-js/issues"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}
