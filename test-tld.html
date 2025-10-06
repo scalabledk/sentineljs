@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sentinel TLD Variation Test</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .test-card {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 20px 0;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #333;
+    }
+    h2 {
+      color: #666;
+      font-size: 18px;
+      margin-top: 0;
+    }
+    .test-item {
+      padding: 10px;
+      margin: 5px 0;
+      border-left: 4px solid #ccc;
+      background: #f9f9f9;
+    }
+    .test-item.pass {
+      border-left-color: #4caf50;
+    }
+    .test-item.fail {
+      border-left-color: #f44336;
+    }
+    code {
+      background: #eee;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Sentinel TLD Variation Test</h1>
+
+  <div class="test-card">
+    <h2>Test 1: Exact Hostname Match (no [tld] placeholder)</h2>
+    <div id="test1"></div>
+  </div>
+
+  <div class="test-card">
+    <h2>Test 2: TLD Variation Enabled (with [tld] placeholder)</h2>
+    <div id="test2"></div>
+  </div>
+
+  <div class="test-card">
+    <h2>Test 3: Combined Example - Full URLs and Regex</h2>
+    <div id="test3"></div>
+  </div>
+
+  <script type="module">
+    import { SentinelClient } from './dist/sentinel.js';
+
+    function runTest(name, pattern, endpoint, expectedTeam, expectedMatch) {
+      const client = new SentinelClient({
+        mode: 'local',
+        teamMapping: {
+          [pattern]: expectedTeam,
+        },
+        defaultTeam: 'unknown',
+      });
+
+      // Access private method through reflection for testing
+      const team = client['getTeamForEndpoint'](endpoint);
+      const matched = team === expectedTeam;
+      const passed = matched === expectedMatch;
+
+      return {
+        name,
+        pattern,
+        endpoint,
+        expectedTeam,
+        expectedMatch,
+        actualTeam: team,
+        matched,
+        passed,
+      };
+    }
+
+    // Test 1: Exact hostname matching (default behavior)
+    const test1Results = [
+      runTest('Same TLD', 'https://api.example.com/users', 'https://api.example.com/users', 'platform', true),
+      runTest('Different TLD', 'https://api.example.com/users', 'https://api.example.dk/users', 'platform', false),
+      runTest('Different subdomain', 'https://api.example.com/users', 'https://www.example.com/users', 'platform', false),
+    ];
+
+    // Test 2: TLD variation enabled
+    const test2Results = [
+      runTest('Same TLD', 'https://api.example.[tld]/users', 'https://api.example.com/users', 'platform', true),
+      runTest('Different TLD (.dk)', 'https://api.example.[tld]/users', 'https://api.example.dk/users', 'platform', true),
+      runTest('Different TLD (.co.uk)', 'https://api.example.[tld]/users', 'https://api.example.co.uk/users', 'platform', true),
+      runTest('Different subdomain', 'https://api.example.[tld]/users', 'https://www.example.com/users', 'platform', false),
+      runTest('Path prefix match', 'https://api.example.[tld]/users', 'https://api.example.dk/users/123', 'platform', true),
+    ];
+
+    // Test 3: Combined example with multiple pattern types
+    function runCombinedTest() {
+      const client = new SentinelClient({
+        mode: 'local',
+        teamMapping: {
+          // Path patterns
+          '/api/users': 'platform',                              // Exact match
+          '/api/users/': 'platform',                             // Prefix match
+
+          // Full URL patterns (exact hostname)
+          'https://api.internal.com/data': 'backend',            // Internal API
+          'https://payment-gateway.company.com/': 'payments',    // Payment service
+
+          // Full URL patterns (with TLD variation)
+          'https://api.example.[tld]/products': 'catalog',       // Multi-region product API
+          'https://cdn.assets.[tld]/images': 'media',            // Multi-region CDN
+
+          // Regex patterns for paths
+          '/^\\/api\\/orders\\/\\d+$/': 'commerce',              // /api/orders/123
+          '/^\\/api\\/v[12]\\/users/': 'platform',               // /api/v1/users, /api/v2/users
+
+          // Regex patterns for full URLs
+          '/^https:\\/\\/.*\\.stripe\\.com\\/.*$/': 'payments',  // Any Stripe subdomain
+          '/^https:\\/\\/[a-z0-9-]+\\.cloudfront\\.net\\/.*$/': 'cdn', // CloudFront URLs
+        },
+        defaultTeam: 'unknown',
+      });
+
+      const tests = [
+        // Path patterns
+        { endpoint: '/api/users', expected: 'platform', description: 'Path exact match' },
+        { endpoint: '/api/users/123', expected: 'platform', description: 'Path prefix match' },
+
+        // Full URL patterns (exact)
+        { endpoint: 'https://api.internal.com/data', expected: 'backend', description: 'Full URL exact hostname' },
+        { endpoint: 'https://payment-gateway.company.com/checkout', expected: 'payments', description: 'Full URL exact with path' },
+
+        // Full URL patterns (TLD variation)
+        { endpoint: 'https://api.example.com/products', expected: 'catalog', description: 'Full URL TLD (.com)' },
+        { endpoint: 'https://api.example.dk/products', expected: 'catalog', description: 'Full URL TLD (.dk)' },
+        { endpoint: 'https://api.example.co.uk/products/123', expected: 'catalog', description: 'Full URL TLD (.co.uk) with path' },
+        { endpoint: 'https://cdn.assets.fr/images/logo.png', expected: 'media', description: 'Full URL TLD (.fr) CDN' },
+
+        // Regex patterns (paths)
+        { endpoint: '/api/orders/456', expected: 'commerce', description: 'Regex path match' },
+        { endpoint: '/api/orders/456/items', expected: 'unknown', description: 'Regex path no match (extra)' },
+        { endpoint: '/api/v1/users', expected: 'platform', description: 'Regex path v1' },
+        { endpoint: '/api/v2/users/search', expected: 'platform', description: 'Regex path v2 with subpath' },
+
+        // Regex patterns (full URLs)
+        { endpoint: 'https://payments.stripe.com/v1/charges', expected: 'payments', description: 'Regex URL Stripe payments' },
+        { endpoint: 'https://connect.stripe.com/oauth', expected: 'payments', description: 'Regex URL Stripe connect' },
+        { endpoint: 'https://d1234567890.cloudfront.net/assets/app.js', expected: 'cdn', description: 'Regex URL CloudFront' },
+      ];
+
+      return tests.map(test => {
+        const team = client['getTeamForEndpoint'](test.endpoint);
+        const passed = team === test.expected;
+        return {
+          name: test.description,
+          pattern: 'Combined mapping',
+          endpoint: test.endpoint,
+          expectedTeam: test.expected,
+          expectedMatch: true,
+          actualTeam: team,
+          matched: passed,
+          passed: passed,
+        };
+      });
+    }
+
+    const test3Results = runCombinedTest();
+
+    function renderResults(results, containerId) {
+      const container = document.getElementById(containerId);
+      results.forEach(result => {
+        const div = document.createElement('div');
+        div.className = `test-item ${result.passed ? 'pass' : 'fail'}`;
+        div.innerHTML = `
+          <strong>${result.passed ? '✓' : '✗'} ${result.name}</strong><br>
+          Pattern: <code>${result.pattern}</code><br>
+          Endpoint: <code>${result.endpoint}</code><br>
+          Expected: ${result.expectedMatch ? 'match' : 'no match'} → Got: ${result.matched ? 'match' : 'no match'} (team: <code>${result.actualTeam}</code>)
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    renderResults(test1Results, 'test1');
+    renderResults(test2Results, 'test2');
+    renderResults(test3Results, 'test3');
+
+    // Summary
+    const allResults = [...test1Results, ...test2Results, ...test3Results];
+    const passed = allResults.filter(r => r.passed).length;
+    const total = allResults.length;
+    console.log(`TLD Variation Tests: ${passed}/${total} passed`);
+    if (passed === total) {
+      console.log('✓ All tests passed!');
+    } else {
+      console.error('✗ Some tests failed');
+    }
+  </script>
+</body>
+</html>

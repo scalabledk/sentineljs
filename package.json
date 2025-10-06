@@ -1,20 +1,25 @@
 {
-  "name": "@scalable-labs/sentineljs",
-  "version": "1.0.0",
-  "description": "Frontend error monitoring client for Sentinel by Scalable Labs",
+  "name": "@scalable-labs/sentinel",
+  "version": "0.1.0",
+  "description": "Frontend error monitoring and tracking client with local storage, Microsoft Teams integration, and visual error viewer",
   "main": "dist/index.js",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
+  "sideEffects": false,
   "files": [
     "dist",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "CHANGELOG.md"
   ],
   "scripts": {
     "build": "tsc",
     "watch": "tsc --watch",
     "prepublishOnly": "npm run build",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint \"src/**/*.ts\"",
+    "lint:fix": "eslint \"src/**/*.ts\" --fix",
+    "format": "prettier --write \"src/**/*.ts\""
   },
   "keywords": [
     "sentinel",
@@ -26,19 +31,30 @@
     "monitoring",
     "analytics",
     "fetch",
-    "axios"
+    "axios",
+    "teams",
+    "microsoft-teams",
+    "error-reporting",
+    "browser",
+    "indexeddb"
   ],
   "author": "Scalable Labs",
   "license": "MIT",
-  "homepage": "https://github.com/scalabledk/sentinel-js#readme",
+  "homepage": "https://github.com/scalabledk/sentineljs#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/scalabledk/sentinel-js.git"
+    "url": "git+https://github.com/scalabledk/sentineljs.git"
   },
   "bugs": {
-    "url": "https://github.com/scalabledk/sentinel-js/issues"
+    "url": "https://github.com/scalabledk/sentineljs/issues"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "eslint": "^9.0.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.0",
+    "prettier": "^3.0.0",
     "typescript": "^5.9.3"
   },
   "engines": {

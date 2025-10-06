@@ -34,10 +34,23 @@ export function installFetchInterceptor(sentinel: SentinelClient): void {
           // Ignore if we can't read the body
         }
 
+        // Capture configured headers
+        const captureHeaders = sentinel.getCaptureHeaders();
+        let headers: Record<string, string> | undefined;
+        if (captureHeaders && captureHeaders.length > 0) {
+          headers = {};
+          captureHeaders.forEach(headerName => {
+            const headerValue = response.headers.get(headerName);
+            if (headerValue) {
+              headers![headerName] = headerValue;
+            }
+          });
+        }
+
         // Extract endpoint path (remove origin)
         const endpoint = extractEndpoint(url);
 
-        sentinel.reportError(endpoint, method, response.status, responsePayload);
+        sentinel.reportError(endpoint, method, response.status, responsePayload, headers);
       }
 
       return response;

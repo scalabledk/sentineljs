@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x, 22.x]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run linter
+        run: npm run lint
+
+      - name: Build
+        run: npm run build
+
+      - name: Check package size
+        run: |
+          npm pack --dry-run
+          SIZE=$(npm pack --dry-run 2>&1 | grep "package size" | awk '{print $4, $5}')
+          echo "Package size: $SIZE"
+
+      - name: Verify TypeScript declarations
+        run: |
+          if [ ! -f "dist/index.d.ts" ]; then
+            echo "Error: Type declarations not generated"
+            exit 1
+          fi
+          echo "✓ Type declarations generated"
+
+      - name: Run security audit
+        run: npm audit --audit-level=high
+        continue-on-error: false

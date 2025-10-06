@@ -5,7 +5,14 @@ import type { SentinelConfig } from './types';
 export { SentinelClient } from './sentinel';
 export { installFetchInterceptor } from './interceptors/fetch';
 export { installAxiosInterceptor } from './interceptors/axios';
-export type { SentinelConfig, ErrorEvent, ErrorBatch } from './types';
+export { IndexedDBStorage } from './storage/indexeddb';
+export { ErrorUI } from './ui/error-ui';
+export type {
+  SentinelConfig,
+  ErrorEvent,
+  ErrorBatch,
+  SentinelMode,
+} from './types';
 
 /**
  * Create and initialize a Sentinel client with fetch interceptor
@@ -16,8 +23,8 @@ export type { SentinelConfig, ErrorEvent, ErrorBatch } from './types';
 export function createSentinel(config: SentinelConfig): SentinelClient {
   const client = new SentinelClient(config);
 
-  // Auto-install fetch interceptor if enabled
-  if (config.enabled) {
+  // Auto-install fetch interceptor if enabled (default true)
+  if (config.enabled !== false) {
     installFetchInterceptor(client);
   }
 

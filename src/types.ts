@@ -6,13 +6,29 @@ export interface ErrorEvent {
   team: string;
   username?: string;
   responsePayload?: string;
+  headers?: Record<string, string>;
 }
+
+export type SentinelMode = 'local' | 'remote';
 
 export interface SentinelConfig {
   /**
-   * Backend URL where errors will be sent
+   * Operating mode:
+   * - 'local': Store errors in browser IndexedDB (no server needed)
+   * - 'remote': Send errors to sentinel-server (requires backendUrl and apiKey)
+   * Default: 'local'
    */
-  backendUrl: string;
+  mode?: SentinelMode;
+
+  /**
+   * Backend URL where errors will be sent (required for 'remote' mode)
+   */
+  backendUrl?: string;
+
+  /**
+   * API key for authenticating with sentinel-server (required for 'remote' mode)
+   */
+  apiKey?: string;
 
   /**
    * Map of endpoint patterns to team names
@@ -22,8 +38,9 @@ export interface SentinelConfig {
 
   /**
    * Enable or disable error reporting (useful for environments)
+   * Default: true
    */
-  enabled: boolean;
+  enabled?: boolean;
 
   /**
    * Optional function to get the current username
@@ -44,6 +61,40 @@ export interface SentinelConfig {
    * Default team name for unmapped endpoints (default: 'unknown')
    */
   defaultTeam?: string;
+
+  /**
+   * IndexedDB database name (default: 'sentinel')
+   */
+  dbName?: string;
+
+  /**
+   * Maximum number of errors to store locally (default: 1000)
+   */
+  maxLocalErrors?: number;
+
+  /**
+   * Show UI for local mode (default: false)
+   * Only available in 'local' mode
+   */
+  showUI?: boolean;
+
+  /**
+   * UI position on screen (default: 'bottom-right')
+   */
+  uiPosition?: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left';
+
+  /**
+   * Microsoft Teams channel URL for sending error notifications
+   * Example: 'https://teams.microsoft.com/l/channel/19%3a...thread.tacv2/General?groupId=...&tenantId=...'
+   */
+  teamsChannelUrl?: string;
+
+  /**
+   * Array of header names to capture from HTTP responses
+   * Example: ['x-correlation-id', 'x-request-id', 'x-trace-id']
+   * Headers will be included in error reports if present
+   */
+  captureHeaders?: string[];
 }
 
 export interface ErrorBatch {
