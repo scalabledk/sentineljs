@@ -7,12 +7,7 @@ export { installFetchInterceptor } from './interceptors/fetch';
 export { installAxiosInterceptor } from './interceptors/axios';
 export { IndexedDBStorage } from './storage/indexeddb';
 export { ErrorUI } from './ui/error-ui';
-export type {
-  SentinelConfig,
-  ErrorEvent,
-  ErrorBatch,
-  SentinelMode,
-} from './types';
+export type { SentinelConfig, ErrorEvent, ErrorBatch, SentinelMode } from './types';
 
 /**
  * Create and initialize a Sentinel client with fetch interceptor

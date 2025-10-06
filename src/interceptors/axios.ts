@@ -22,12 +22,9 @@ export function installAxiosInterceptor(axiosInstance: any, sentinel: SentinelCl
 
         let responsePayload: string | undefined;
         if (response.data) {
-          const payload = typeof response.data === 'string'
-            ? response.data
-            : JSON.stringify(response.data);
-          responsePayload = payload.length > 1000
-            ? payload.substring(0, 1000) + '...'
-            : payload;
+          const payload =
+            typeof response.data === 'string' ? response.data : JSON.stringify(response.data);
+          responsePayload = payload.length > 1000 ? payload.substring(0, 1000) + '...' : payload;
         }
 
         sentinel.reportError(endpoint, method, response.status, responsePayload);
@@ -44,12 +41,11 @@ export function installAxiosInterceptor(axiosInstance: any, sentinel: SentinelCl
 
         let responsePayload: string | undefined;
         if (error.response.data) {
-          const payload = typeof error.response.data === 'string'
-            ? error.response.data
-            : JSON.stringify(error.response.data);
-          responsePayload = payload.length > 1000
-            ? payload.substring(0, 1000) + '...'
-            : payload;
+          const payload =
+            typeof error.response.data === 'string'
+              ? error.response.data
+              : JSON.stringify(error.response.data);
+          responsePayload = payload.length > 1000 ? payload.substring(0, 1000) + '...' : payload;
         }
 
         sentinel.reportError(endpoint, method, error.response.status, responsePayload);
@@ -62,7 +58,7 @@ export function installAxiosInterceptor(axiosInstance: any, sentinel: SentinelCl
       }
 
       return Promise.reject(error);
-    }
+    },
   );
 }
 

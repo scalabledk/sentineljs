@@ -71,8 +71,7 @@ export class IndexedDBStorage {
       const request = store.add(error);
 
       request.onsuccess = () => resolve();
-      request.onerror = () =>
-        reject(new Error('Failed to store error in IndexedDB'));
+      request.onerror = () => reject(new Error('Failed to store error in IndexedDB'));
     });
   }
 
@@ -91,24 +90,20 @@ export class IndexedDBStorage {
 
       request.onsuccess = () => {
         const errors = request.result.map((record: any) => {
-          const { id, ...error } = record;
+          const { id: _, ...error } = record;
           return error as ErrorEvent;
         });
         resolve(errors);
       };
 
-      request.onerror = () =>
-        reject(new Error('Failed to retrieve errors from IndexedDB'));
+      request.onerror = () => reject(new Error('Failed to retrieve errors from IndexedDB'));
     });
   }
 
   /**
    * Get errors within a time range
    */
-  async getErrorsByTimeRange(
-    startTime: number,
-    endTime: number
-  ): Promise<ErrorEvent[]> {
+  async getErrorsByTimeRange(startTime: number, endTime: number): Promise<ErrorEvent[]> {
     if (!this.db) {
       throw new Error('Database not initialized');
     }
@@ -122,14 +117,13 @@ export class IndexedDBStorage {
 
       request.onsuccess = () => {
         const errors = request.result.map((record: any) => {
-          const { id, ...error } = record;
+          const { id: _, ...error } = record;
           return error as ErrorEvent;
         });
         resolve(errors);
       };
 
-      request.onerror = () =>
-        reject(new Error('Failed to retrieve errors from IndexedDB'));
+      request.onerror = () => reject(new Error('Failed to retrieve errors from IndexedDB'));
     });
   }
 
@@ -147,8 +141,7 @@ export class IndexedDBStorage {
       const request = store.clear();
 
       request.onsuccess = () => resolve();
-      request.onerror = () =>
-        reject(new Error('Failed to clear errors from IndexedDB'));
+      request.onerror = () => reject(new Error('Failed to clear errors from IndexedDB'));
     });
   }
 
@@ -166,8 +159,7 @@ export class IndexedDBStorage {
       const request = store.count();
 
       request.onsuccess = () => resolve(request.result);
-      request.onerror = () =>
-        reject(new Error('Failed to count errors in IndexedDB'));
+      request.onerror = () => reject(new Error('Failed to count errors in IndexedDB'));
     });
   }
 
@@ -197,8 +189,7 @@ export class IndexedDBStorage {
         }
       };
 
-      request.onerror = () =>
-        reject(new Error('Failed to delete oldest error'));
+      request.onerror = () => reject(new Error('Failed to delete oldest error'));
     });
   }
 

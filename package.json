@@ -19,7 +19,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint \"src/**/*.ts\"",
     "lint:fix": "eslint \"src/**/*.ts\" --fix",
-    "format": "prettier --write \"src/**/*.ts\""
+    "format": "prettier --write \"src/**/*.ts\"",
+    "prepare": "lefthook install"
   },
   "keywords": [
     "sentinel",
@@ -49,10 +50,11 @@
     "url": "https://github.com/scalabledk/sentineljs/issues"
   },
   "devDependencies": {
+    "@evilmartians/lefthook": "^1.13.6",
     "@typescript-eslint/eslint-plugin": "^8.0.0",
     "@typescript-eslint/parser": "^8.0.0",
     "eslint": "^9.0.0",
-    "eslint-config-prettier": "^9.0.0",
+    "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.0.0",
     "prettier": "^3.0.0",
     "typescript": "^5.9.3"

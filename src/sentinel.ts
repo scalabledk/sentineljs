@@ -4,7 +4,10 @@ import { ErrorUI } from './ui/error-ui';
 
 export class SentinelClient {
   private config: Required<
-    Omit<SentinelConfig, 'backendUrl' | 'apiKey' | 'showUI' | 'uiPosition' | 'teamsChannelUrl' | 'captureHeaders'>
+    Omit<
+      SentinelConfig,
+      'backendUrl' | 'apiKey' | 'showUI' | 'uiPosition' | 'teamsChannelUrl' | 'captureHeaders'
+    >
   > & {
     backendUrl?: string;
     apiKey?: string;
@@ -38,14 +41,10 @@ export class SentinelClient {
     // Validate remote mode configuration
     if (this.config.mode === 'remote') {
       if (!this.config.backendUrl) {
-        throw new Error(
-          'backendUrl is required when mode is "remote"'
-        );
+        throw new Error('backendUrl is required when mode is "remote"');
       }
       if (!this.config.apiKey) {
-        throw new Error(
-          'apiKey is required when mode is "remote"'
-        );
+        throw new Error('apiKey is required when mode is "remote"');
       }
     }
 
@@ -62,10 +61,7 @@ export class SentinelClient {
 
   private async initStorage(): Promise<void> {
     try {
-      this.storage = new IndexedDBStorage(
-        this.config.dbName,
-        this.config.maxLocalErrors
-      );
+      this.storage = new IndexedDBStorage(this.config.dbName, this.config.maxLocalErrors);
       await this.storage.init();
     } catch (error) {
       console.error('[Sentinel] Failed to initialize IndexedDB:', error);
@@ -103,7 +99,7 @@ export class SentinelClient {
     method: string,
     statusCode: number,
     responsePayload?: string,
-    headers?: Record<string, string>
+    headers?: Record<string, string>,
   ): void {
     if (!this.config.enabled) {
       return;
@@ -236,7 +232,7 @@ export class SentinelClient {
           if (regex.test(endpoint)) {
             return team;
           }
-        } catch (err) {
+        } catch {
           // Invalid regex, skip
           console.warn(`[Sentinel] Invalid regex pattern: ${pattern}`);
         }
@@ -268,7 +264,6 @@ export class SentinelClient {
       // For TLD variation, we need to extract the base domain from pattern
       let patternHostname: string;
       let patternPath: string;
-      let patternProtocol: string;
 
       if (tldVariation) {
         // Extract protocol
@@ -276,12 +271,12 @@ export class SentinelClient {
         if (!protocolMatch) {
           return false;
         }
-        patternProtocol = protocolMatch[1];
 
         // Extract hostname and path parts
         const withoutProtocol = pattern.substring(protocolMatch[0].length);
         const slashIndex = withoutProtocol.indexOf('/');
-        const hostnameWithTld = slashIndex >= 0 ? withoutProtocol.substring(0, slashIndex) : withoutProtocol;
+        const hostnameWithTld =
+          slashIndex >= 0 ? withoutProtocol.substring(0, slashIndex) : withoutProtocol;
         patternPath = slashIndex >= 0 ? withoutProtocol.substring(slashIndex) : '/';
 
         // Extract base domain (everything before [tld])
@@ -291,13 +286,15 @@ export class SentinelClient {
         const patternUrl = new URL(pattern);
         patternHostname = patternUrl.hostname;
         patternPath = patternUrl.pathname;
-        patternProtocol = patternUrl.protocol.replace(':', '');
       }
 
       // Try to construct full URL from endpoint
       let endpointUrl: URL;
       try {
-        endpointUrl = new URL(endpoint, typeof window !== 'undefined' ? window.location.origin : 'http://localhost');
+        endpointUrl = new URL(
+          endpoint,
+          typeof window !== 'undefined' ? window.location.origin : 'http://localhost',
+        );
       } catch {
         // If endpoint is just a path, combine with current origin
         if (typeof window !== 'undefined') {
@@ -341,7 +338,7 @@ export class SentinelClient {
 
       // Exact hostname match (default)
       return patternHostname === endpointHostname;
-    } catch (err) {
+    } catch {
       return false;
     }
   }

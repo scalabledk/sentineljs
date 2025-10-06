@@ -306,7 +306,9 @@ export class ErrorUI {
 
       <div style="padding: 16px 24px; border-top: 1px solid #e0e0e0; background: #f8f9fa;">
         <div style="display: flex; gap: 12px; align-items: center;">
-          ${this.hasAnyTeamsUrl() ? `
+          ${
+            this.hasAnyTeamsUrl()
+              ? `
             <button id="sentinel-send-all-btn" style="
               padding: 8px 16px;
               background: #5b5fc7;
@@ -323,7 +325,9 @@ export class ErrorUI {
               <span>📤</span>
               Send All to Teams
             </button>
-          ` : ''}
+          `
+              : ''
+          }
 
           <button id="sentinel-copy-all-btn" style="
             padding: 8px 16px;
@@ -404,9 +408,7 @@ export class ErrorUI {
   /**
    * Group errors by team
    */
-  private groupErrorsByTeam(
-    errors: ErrorEvent[]
-  ): Record<string, ErrorEvent[]> {
+  private groupErrorsByTeam(errors: ErrorEvent[]): Record<string, ErrorEvent[]> {
     return errors.reduce(
       (acc, error) => {
         if (!acc[error.team]) {
@@ -415,7 +417,7 @@ export class ErrorUI {
         acc[error.team].push(error);
         return acc;
       },
-      {} as Record<string, ErrorEvent[]>
+      {} as Record<string, ErrorEvent[]>,
     );
   }
 
@@ -423,7 +425,6 @@ export class ErrorUI {
    * Render a team section
    */
   private renderTeamSection(team: string, errors: ErrorEvent[]): string {
-
     return `
       <div style="margin-bottom: 32px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
@@ -456,13 +457,8 @@ export class ErrorUI {
   /**
    * Render a single error row
    */
-  private renderErrorRow(
-    error: ErrorEvent,
-    team: string,
-    index: number
-  ): string {
-    const statusMessage =
-      HTTP_STATUS_MESSAGES[error.statusCode] || 'Unknown Error';
+  private renderErrorRow(error: ErrorEvent, team: string, index: number): string {
+    const statusMessage = HTTP_STATUS_MESSAGES[error.statusCode] || 'Unknown Error';
     const timestamp = new Date(error.timestamp).toLocaleString();
 
     return `
@@ -560,11 +556,7 @@ export class ErrorUI {
     const clearBtn = document.getElementById('sentinel-clear-btn');
     if (clearBtn) {
       clearBtn.addEventListener('click', async () => {
-        if (
-          confirm(
-            'Are you sure you want to clear all tracked errors? This cannot be undone.'
-          )
-        ) {
+        if (confirm('Are you sure you want to clear all tracked errors? This cannot be undone.')) {
           // Trigger clear callback if provided
           if (this.clearCallback) {
             await this.clearCallback();
@@ -597,7 +589,6 @@ export class ErrorUI {
         }
       });
     });
-
   }
 
   /**
@@ -631,15 +622,14 @@ export class ErrorUI {
 
     // Get all unique teams for tagging
     const allTeams = Object.keys(groupedErrors);
-    const teamTags = allTeams.map(t => `@${t}`).join(' ');
+    const teamTags = allTeams.map((t) => `@${t}`).join(' ');
 
     // Build JSON object with all errors grouped by team
     const errorsJson: Record<string, any[]> = {};
 
     for (const [errorTeam, teamErrors] of Object.entries(groupedErrors)) {
       errorsJson[errorTeam] = teamErrors.map((error) => {
-        const statusMessage =
-          HTTP_STATUS_MESSAGES[error.statusCode] || 'Unknown Error';
+        const statusMessage = HTTP_STATUS_MESSAGES[error.statusCode] || 'Unknown Error';
 
         const errorData: any = {
           endpoint: error.endpoint,
@@ -684,8 +674,7 @@ ${JSON.stringify(errorsJson, null, 2)}
    * Copy error details to clipboard
    */
   private async copyErrorDetails(error: ErrorEvent): Promise<void> {
-    const statusMessage =
-      HTTP_STATUS_MESSAGES[error.statusCode] || 'Unknown Error';
+    const statusMessage = HTTP_STATUS_MESSAGES[error.statusCode] || 'Unknown Error';
 
     // Generate correlation ID
     const correlationId = this.generateCorrelationId();
@@ -744,15 +733,14 @@ ${JSON.stringify(errorJson, null, 2)}
 
     // Get all unique teams for tagging
     const allTeams = Object.keys(groupedErrors);
-    const teamTags = allTeams.map(t => `@${t}`).join(' ');
+    const teamTags = allTeams.map((t) => `@${t}`).join(' ');
 
     // Build JSON object with all errors grouped by team
     const errorsJson: Record<string, any[]> = {};
 
     for (const [errorTeam, teamErrors] of Object.entries(groupedErrors)) {
       errorsJson[errorTeam] = teamErrors.map((error) => {
-        const statusMessage =
-          HTTP_STATUS_MESSAGES[error.statusCode] || 'Unknown Error';
+        const statusMessage = HTTP_STATUS_MESSAGES[error.statusCode] || 'Unknown Error';
 
         const errorData: any = {
           endpoint: error.endpoint,

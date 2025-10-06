@@ -18,7 +18,8 @@ export function installFetchInterceptor(sentinel: SentinelClient): void {
 
       // Report errors (4xx and 5xx)
       if (response.status >= 400) {
-        const url = typeof input === 'string' ? input : (input instanceof Request ? input.url : String(input));
+        const url =
+          typeof input === 'string' ? input : input instanceof Request ? input.url : String(input);
         const method = init?.method || 'GET';
 
         // Try to get response payload
@@ -39,7 +40,7 @@ export function installFetchInterceptor(sentinel: SentinelClient): void {
         let headers: Record<string, string> | undefined;
         if (captureHeaders && captureHeaders.length > 0) {
           headers = {};
-          captureHeaders.forEach(headerName => {
+          captureHeaders.forEach((headerName) => {
             const headerValue = response.headers.get(headerName);
             if (headerValue) {
               headers![headerName] = headerValue;
@@ -56,12 +57,18 @@ export function installFetchInterceptor(sentinel: SentinelClient): void {
       return response;
     } catch (error) {
       // Network error or other fetch failure
-      const url = typeof input === 'string' ? input : (input instanceof Request ? input.url : String(input));
+      const url =
+        typeof input === 'string' ? input : input instanceof Request ? input.url : String(input);
       const method = init?.method || 'GET';
       const endpoint = extractEndpoint(url);
 
       // Report as 0 status code (network error)
-      sentinel.reportError(endpoint, method, 0, error instanceof Error ? error.message : 'Network error');
+      sentinel.reportError(
+        endpoint,
+        method,
+        0,
+        error instanceof Error ? error.message : 'Network error',
+      );
 
       throw error;
     }
