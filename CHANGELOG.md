@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2025-10-06
+
+### Added
+- **Legacy Build Support**: ES5-compatible build for Webpack 4 and older bundlers
+  - New entry point: `@scalable-labs/sentineljs/legacy`
+  - Includes polyfills for `String.prototype.startsWith`, `includes`, `Object.assign`, `Object.entries`
+  - UMD and CommonJS formats for broader compatibility
+  - Full TypeScript definitions included
+  - Compatible with IE11+ (with Promise polyfill)
+- **Rollup Build Pipeline**: Modern build system for generating legacy builds
+- **Comprehensive Legacy Documentation**: Added `LEGACY.md` with usage examples and migration guide
+
+### Changed
+- Build process now generates both modern (ES2020) and legacy (ES5) bundles
+- Package exports now include both modern and legacy entry points
+
 ## [0.1.1] - 2025-10-06
 
 ### Fixed
@@ -81,5 +97,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - MIT License included
 - Package configured for npm publishing as `@scalable-labs/sentinel`
 
+[0.2.0]: https://github.com/scalabledk/sentineljs/releases/tag/v0.2.0
 [0.1.1]: https://github.com/scalabledk/sentineljs/releases/tag/v0.1.1
 [0.1.0]: https://github.com/scalabledk/sentineljs/releases/tag/v0.1.0

@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "target": "ES5",
+    "module": "ESNext",
+    "lib": ["ES5", "ES2015.Promise", "ES2015.Iterable", "DOM"],
+    "declaration": false,
+    "declarationMap": false,
+    "outDir": "./dist/legacy",
+    "downlevelIteration": true
+  }
+}

@@ -1,11 +1,23 @@
 {
   "name": "@scalable-labs/sentinel",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Frontend error monitoring and tracking client with local storage, Microsoft Teams integration, and visual error viewer",
   "main": "dist/index.js",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "sideEffects": false,
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./legacy": {
+      "import": "./dist/legacy/sentinel.cjs.js",
+      "require": "./dist/legacy/sentinel.cjs.js",
+      "types": "./dist/legacy/sentinel.d.ts"
+    }
+  },
   "files": [
     "dist",
     "README.md",
@@ -13,7 +25,9 @@
     "CHANGELOG.md"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "npm run build:modern && npm run build:legacy",
+    "build:modern": "tsc",
+    "build:legacy": "rollup -c",
     "watch": "tsc --watch",
     "prepublishOnly": "npm run build",
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -51,12 +65,21 @@
   },
   "devDependencies": {
     "@evilmartians/lefthook": "^1.13.6",
+    "@rollup/plugin-commonjs": "^28.0.6",
+    "@rollup/plugin-node-resolve": "^16.0.2",
+    "@rollup/plugin-replace": "^6.0.2",
+    "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-typescript": "^12.1.4",
     "@typescript-eslint/eslint-plugin": "^8.0.0",
     "@typescript-eslint/parser": "^8.0.0",
+    "core-js-pure": "^3.45.1",
     "eslint": "^9.0.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.0.0",
     "prettier": "^3.0.0",
+    "rollup": "^4.52.4",
+    "rollup-plugin-dts": "^6.2.3",
+    "tslib": "^2.8.1",
     "typescript": "^5.9.3"
   },
   "engines": {
