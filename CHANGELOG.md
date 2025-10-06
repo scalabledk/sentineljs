@@ -7,7 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.1] - 2025-10-06
+
+### Fixed
+- Linter errors that were preventing CI from passing
+- ESLint configuration to properly handle underscore-prefixed unused variables
+- Unused variable errors in `sentinel.ts` and `indexeddb.ts`
+
+### Added
+- Lefthook pre-commit hooks for automated code quality checks
+- Pre-push build verification to prevent broken commits
+
+### Changed
+- Updated `eslint-config-prettier` to latest version (10.1.8)
+
 ## [0.1.0] - 2025-10-06
+
+**⚠️ Note**: This release had linter errors that prevented CI from passing. Use v0.1.1 instead.
 
 **⚠️ Pre-release**: This is an initial pre-1.0 release. APIs may change and stability is not guaranteed.
 
@@ -65,4 +81,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - MIT License included
 - Package configured for npm publishing as `@scalable-labs/sentinel`
 
+[0.1.1]: https://github.com/scalabledk/sentineljs/releases/tag/v0.1.1
 [0.1.0]: https://github.com/scalabledk/sentineljs/releases/tag/v0.1.0
