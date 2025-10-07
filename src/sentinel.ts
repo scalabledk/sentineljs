@@ -23,6 +23,7 @@ export class SentinelClient {
     teamsButtonLabel?: string;
     captureHeaders?: string[];
     deduplicationWindow?: number;
+    debug?: boolean;
   };
   private errorQueue: ErrorEvent[] = [];
   private batchTimer: ReturnType<typeof setTimeout> | null = null;
@@ -47,6 +48,7 @@ export class SentinelClient {
       teamsButtonLabel: config.teamsButtonLabel,
       captureHeaders: config.captureHeaders,
       deduplicationWindow: config.deduplicationWindow ?? 60000, // 60 seconds default
+      debug: config.debug ?? false,
     };
 
     // Validate remote mode configuration
@@ -106,14 +108,30 @@ export class SentinelClient {
     headers?: Record<string, string>,
   ): void {
     if (!this.config.enabled) {
+      if (this.config.debug) {
+        console.log('[Sentinel Debug] Error reporting disabled');
+      }
       return;
     }
 
     const team = this.getTeamForEndpoint(endpoint);
 
+    if (this.config.debug) {
+      console.log('[Sentinel Debug] reportError called:', {
+        endpoint,
+        method,
+        statusCode,
+        team,
+        mappedTeam: team !== this.config.defaultTeam ? 'yes' : 'no',
+      });
+    }
+
     // Only capture errors for endpoints that match team mappings
     // Skip if team is default team (no mapping found)
     if (team === this.config.defaultTeam) {
+      if (this.config.debug) {
+        console.log('[Sentinel Debug] Skipping error - endpoint not in team mappings:', endpoint);
+      }
       return;
     }
 
@@ -122,13 +140,30 @@ export class SentinelClient {
     const now = Date.now();
     const lastReported = this.deduplicationCache.get(deduplicationKey);
 
+    if (this.config.debug) {
+      console.log('[Sentinel Debug] Deduplication check:', {
+        key: deduplicationKey,
+        lastReported: lastReported ? new Date(lastReported).toISOString() : 'never',
+        timeSinceLastReport: lastReported ? now - lastReported : 'n/a',
+        window: this.config.deduplicationWindow,
+        isDuplicate: lastReported ? now - lastReported < (this.config.deduplicationWindow ?? 60000) : false,
+      });
+    }
+
     if (lastReported && now - lastReported < (this.config.deduplicationWindow ?? 60000)) {
       // Error was reported within the deduplication window, skip it
+      if (this.config.debug) {
+        console.log('[Sentinel Debug] Skipping duplicate error');
+      }
       return;
     }
 
     // Update deduplication cache
     this.deduplicationCache.set(deduplicationKey, now);
+
+    if (this.config.debug) {
+      console.log('[Sentinel Debug] Error accepted and stored');
+    }
 
     // Clean up old entries from deduplication cache
     this.cleanupDeduplicationCache();

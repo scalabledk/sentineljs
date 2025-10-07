@@ -110,6 +110,12 @@ export interface SentinelConfig {
    * Example: 30000 (30 seconds), 120000 (2 minutes)
    */
   deduplicationWindow?: number;
+
+  /**
+   * Enable debug logging to console (default: false)
+   * Useful for troubleshooting deduplication and team mapping issues
+   */
+  debug?: boolean;
 }
 
 export interface ErrorBatch {

@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.2] - 2025-10-07
+
+### Added
+- **Debug Mode**: New `debug` configuration option for troubleshooting
+  - Set `debug: true` to enable detailed console logging
+  - Logs team mapping results, deduplication checks, and error acceptance/rejection
+  - Shows deduplication keys, timestamps, and window calculations
+  - Useful for diagnosing why errors are being skipped or not captured
+
+### Fixed
+- **Interceptor Error Handling**: Added defensive error handling to prevent internal errors from breaking error reporting
+  - Wrapped all `reportError` calls in try-catch blocks in both fetch and axios interceptors
+  - Added optional chaining for safer property access (`response.config?.url`)
+  - Internal errors in reporting now log to console but never crash the application
+  - Prevents scenarios where undefined values could cause unhandled exceptions
+
 ## [0.5.1] - 2025-10-07
 
 ### Fixed
@@ -171,6 +187,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - MIT License included
 - Package configured for npm publishing as `@scalable-labs/sentinel`
 
+[0.5.2]: https://github.com/scalabledk/sentineljs/releases/tag/v0.5.2
 [0.5.1]: https://github.com/scalabledk/sentineljs/releases/tag/v0.5.1
 [0.5.0]: https://github.com/scalabledk/sentineljs/releases/tag/v0.5.0
 [0.4.0]: https://github.com/scalabledk/sentineljs/releases/tag/v0.4.0
