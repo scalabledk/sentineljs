@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2025-10-07
+
+### Changed
+- **Simplified Teams Integration**: Removed deep link construction in favor of simple button
+  - Added `teamsButtonLabel` configuration option (default: "Send to Teams")
+  - Button now simply opens the configured Teams channel URL in a new tab
+  - Allows custom button text like "Visit our Teams channel" or "Report to Support"
+  - Removed complex deep link construction that was not supported by Microsoft Teams
+
+### Fixed
+- Teams button now works reliably without depending on unsupported deep link features
+
 ## [0.3.0] - 2025-10-07
 
 ### Added
@@ -130,6 +142,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - MIT License included
 - Package configured for npm publishing as `@scalable-labs/sentinel`
 
+[0.4.0]: https://github.com/scalabledk/sentineljs/releases/tag/v0.4.0
 [0.3.0]: https://github.com/scalabledk/sentineljs/releases/tag/v0.3.0
 [0.2.2]: https://github.com/scalabledk/sentineljs/releases/tag/v0.2.2
 [0.2.1]: https://github.com/scalabledk/sentineljs/releases/tag/v0.2.1

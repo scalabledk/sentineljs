@@ -2,6 +2,7 @@ import { ErrorEvent } from '../types';
 
 interface UIConfig {
   teamsChannelUrl?: string;
+  teamsButtonLabel?: string;
   position?: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left';
 }
 
@@ -34,6 +35,7 @@ export class ErrorUI {
     this.config = {
       position: config.position || 'bottom-right',
       teamsChannelUrl: config.teamsChannelUrl,
+      teamsButtonLabel: config.teamsButtonLabel || 'Send to Teams',
     };
   }
 
@@ -344,7 +346,7 @@ export class ErrorUI {
               gap: 6px;
             ">
               <span>📤</span>
-              Send All to Teams
+              ${this.escapeHtml(this.config.teamsButtonLabel || 'Send to Teams')}
             </button>
           `
               : ''
@@ -632,64 +634,16 @@ export class ErrorUI {
 
   /**
    * Send all errors to Teams channel
+   * Simply opens the Teams URL in a new tab
    */
-  private sendAllErrorsToTeam(errors: ErrorEvent[]): void {
+  private sendAllErrorsToTeam(_errors: ErrorEvent[]): void {
     const teamsUrl = this.config.teamsChannelUrl;
     if (!teamsUrl) {
       return;
     }
 
-    // Group errors by team for the message
-    const groupedErrors = this.groupErrorsByTeam(errors);
-
-    // Get all unique teams for tagging
-    const allTeams = Object.keys(groupedErrors);
-    const teamTags = allTeams.map((t) => `@${t}`).join(' ');
-
-    // Build JSON object with all errors grouped by team
-    const errorsJson: Record<string, any[]> = {};
-
-    for (const [errorTeam, teamErrors] of Object.entries(groupedErrors)) {
-      errorsJson[errorTeam] = teamErrors.map((error) => {
-        const statusMessage = HTTP_STATUS_MESSAGES[error.statusCode] || 'Unknown Error';
-
-        const errorData: any = {
-          endpoint: error.endpoint,
-          method: error.method,
-          statusCode: error.statusCode,
-          statusMessage: statusMessage,
-          timestamp: new Date(error.timestamp).toISOString(),
-          username: error.username || 'unknown',
-          correlationId: this.generateCorrelationId(),
-          responsePayload: error.responsePayload || null,
-        };
-
-        // Add headers if present
-        if (error.headers && Object.keys(error.headers).length > 0) {
-          errorData.headers = error.headers;
-        }
-
-        return errorData;
-      });
-    }
-
-    // Construct the message with team tags and JSON code block
-    const message = `${teamTags}
-
-\`\`\`json
-${JSON.stringify(errorsJson, null, 2)}
-\`\`\``;
-
-    // Encode the message for URL
-    const encodedMessage = encodeURIComponent(message);
-
-    // Construct Teams deep link
-    const teamsDeepLink = teamsUrl.includes('?')
-      ? `${teamsUrl}&message=${encodedMessage}`
-      : `${teamsUrl}?message=${encodedMessage}`;
-
-    // Open Teams with pre-filled message
-    window.open(teamsDeepLink, '_blank');
+    // Simply open the Teams channel URL in a new tab
+    window.open(teamsUrl, '_blank');
   }
 
   /**

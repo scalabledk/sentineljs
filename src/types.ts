@@ -90,6 +90,13 @@ export interface SentinelConfig {
   teamsChannelUrl?: string;
 
   /**
+   * Custom label for the Teams button (default: 'Send to Teams')
+   * Example: 'Visit our Teams channel', 'Report to Support'
+   * Only used when teamsChannelUrl is provided
+   */
+  teamsButtonLabel?: string;
+
+  /**
    * Array of header names to capture from HTTP responses
    * Example: ['x-correlation-id', 'x-request-id', 'x-trace-id']
    * Headers will be included in error reports if present

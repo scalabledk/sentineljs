@@ -6,7 +6,13 @@ export class SentinelClient {
   private config: Required<
     Omit<
       SentinelConfig,
-      'backendUrl' | 'apiKey' | 'showUI' | 'uiPosition' | 'teamsChannelUrl' | 'captureHeaders'
+      | 'backendUrl'
+      | 'apiKey'
+      | 'showUI'
+      | 'uiPosition'
+      | 'teamsChannelUrl'
+      | 'teamsButtonLabel'
+      | 'captureHeaders'
     >
   > & {
     backendUrl?: string;
@@ -14,6 +20,7 @@ export class SentinelClient {
     showUI?: boolean;
     uiPosition?: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left';
     teamsChannelUrl?: string;
+    teamsButtonLabel?: string;
     captureHeaders?: string[];
   };
   private errorQueue: ErrorEvent[] = [];
@@ -35,6 +42,7 @@ export class SentinelClient {
       showUI: config.showUI ?? false,
       uiPosition: config.uiPosition ?? 'bottom-right',
       teamsChannelUrl: config.teamsChannelUrl,
+      teamsButtonLabel: config.teamsButtonLabel,
       captureHeaders: config.captureHeaders,
     };
 
@@ -73,6 +81,7 @@ export class SentinelClient {
       this.ui = new ErrorUI({
         position: this.config.uiPosition,
         teamsChannelUrl: this.config.teamsChannelUrl,
+        teamsButtonLabel: this.config.teamsButtonLabel,
       });
 
       // Set callback to fetch latest errors
