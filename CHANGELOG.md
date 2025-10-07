@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.3] - 2025-10-07
+
+### Fixed
+- **CI Formatting**: Fixed prettier formatting issues that prevented CI from passing
+  - Simplified nested ternary operators to if-else statements for better readability
+  - Fixed isDuplicate ternary formatting
+
 ## [0.5.2] - 2025-10-07
 
 ### Added
@@ -187,6 +194,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - MIT License included
 - Package configured for npm publishing as `@scalable-labs/sentinel`
 
+[0.5.3]: https://github.com/scalabledk/sentineljs/releases/tag/v0.5.3
 [0.5.2]: https://github.com/scalabledk/sentineljs/releases/tag/v0.5.2
 [0.5.1]: https://github.com/scalabledk/sentineljs/releases/tag/v0.5.1
 [0.5.0]: https://github.com/scalabledk/sentineljs/releases/tag/v0.5.0
