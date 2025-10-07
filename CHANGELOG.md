@@ -7,11 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.1] - 2025-10-07
+
+### Fixed
+- **Package Exports**: Fixed TypeScript module resolution for `/legacy` export
+  - Added `types` field first in export conditions for better TypeScript compatibility
+  - Added `default` export fallback for bundlers
+  - Removed `import` condition from legacy export (CommonJS only)
+  - Now works correctly with `moduleResolution: "node"`, `"node16"`, `"nodenext"`, and `"bundler"`
+
 ## [0.2.0] - 2025-10-06
 
 ### Added
 - **Legacy Build Support**: ES5-compatible build for Webpack 4 and older bundlers
-  - New entry point: `@scalable-labs/sentineljs/legacy`
+  - New entry point: `@scalable-labs/sentinel/legacy`
   - Includes polyfills for `String.prototype.startsWith`, `includes`, `Object.assign`, `Object.entries`
   - UMD and CommonJS formats for broader compatibility
   - Full TypeScript definitions included
@@ -97,6 +106,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - MIT License included
 - Package configured for npm publishing as `@scalable-labs/sentinel`
 
+[0.2.1]: https://github.com/scalabledk/sentineljs/releases/tag/v0.2.1
 [0.2.0]: https://github.com/scalabledk/sentineljs/releases/tag/v0.2.0
 [0.1.1]: https://github.com/scalabledk/sentineljs/releases/tag/v0.1.1
 [0.1.0]: https://github.com/scalabledk/sentineljs/releases/tag/v0.1.0

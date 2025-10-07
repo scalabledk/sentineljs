@@ -15,7 +15,7 @@ The legacy build:
 Install the package normally:
 
 ```bash
-npm install @scalable-labs/sentineljs
+npm install @scalable-labs/sentinel
 ```
 
 ## Usage with Webpack 4
@@ -24,7 +24,7 @@ npm install @scalable-labs/sentineljs
 
 ```javascript
 // Use the legacy build
-import { createSentinel } from '@scalable-labs/sentineljs/legacy';
+import { createSentinel } from '@scalable-labs/sentinel/legacy';
 
 const sentinel = createSentinel({
   mode: 'local',
@@ -41,7 +41,7 @@ const sentinel = createSentinel({
 If you're not using a module bundler, include the UMD build directly:
 
 ```html
-<script src="node_modules/@scalable-labs/sentineljs/dist/legacy/sentinel.umd.js"></script>
+<script src="node_modules/@scalable-labs/sentinel/dist/legacy/sentinel.umd.js"></script>
 <script>
   var sentinel = Sentinel.createSentinel({
     mode: 'local',
@@ -61,7 +61,7 @@ module.exports = {
   // ... other config
   resolve: {
     alias: {
-      '@scalable-labs/sentineljs': '@scalable-labs/sentineljs/legacy',
+      '@scalable-labs/sentinel': '@scalable-labs/sentinel/legacy',
     },
   },
 };
@@ -90,7 +90,7 @@ npm install promise-polyfill
 
 ```javascript
 import 'promise-polyfill/src/polyfill';
-import { createSentinel } from '@scalable-labs/sentineljs/legacy';
+import { createSentinel } from '@scalable-labs/sentinel/legacy';
 ```
 
 ## What's Polyfilled?
@@ -114,7 +114,7 @@ The legacy build is larger due to polyfills and ES5 transpilation:
 The legacy build includes full TypeScript definitions:
 
 ```typescript
-import { createSentinel, SentinelClient, SentinelConfig } from '@scalable-labs/sentineljs/legacy';
+import { createSentinel, SentinelClient, SentinelConfig } from '@scalable-labs/sentinel/legacy';
 
 const sentinel: SentinelClient = createSentinel({
   mode: 'local',
@@ -130,7 +130,7 @@ const sentinel: SentinelClient = createSentinel({
 
 **Solution**: Use the legacy build import:
 ```javascript
-import { createSentinel } from '@scalable-labs/sentineljs/legacy';
+import { createSentinel } from '@scalable-labs/sentinel/legacy';
 ```
 
 ### Issue: "Can't resolve 'core-js'"
@@ -178,8 +178,8 @@ Output will be in `dist/legacy/`:
 When you upgrade your build tools, you can switch back to the modern build:
 
 ```diff
-- import { createSentinel } from '@scalable-labs/sentineljs/legacy';
-+ import { createSentinel } from '@scalable-labs/sentineljs';
+- import { createSentinel } from '@scalable-labs/sentinel/legacy';
++ import { createSentinel } from '@scalable-labs/sentinel';
 ```
 
 No other code changes are required - the API is identical.

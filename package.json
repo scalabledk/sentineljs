@@ -1,6 +1,6 @@
 {
   "name": "@scalable-labs/sentinel",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Frontend error monitoring and tracking client with local storage, Microsoft Teams integration, and visual error viewer",
   "main": "dist/index.js",
   "module": "dist/index.js",
@@ -8,14 +8,15 @@
   "sideEffects": false,
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "default": "./dist/index.js"
     },
     "./legacy": {
-      "import": "./dist/legacy/sentinel.cjs.js",
+      "types": "./dist/legacy/sentinel.d.ts",
       "require": "./dist/legacy/sentinel.cjs.js",
-      "types": "./dist/legacy/sentinel.d.ts"
+      "default": "./dist/legacy/sentinel.cjs.js"
     }
   },
   "files": [
