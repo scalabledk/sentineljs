@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0] - 2025-10-07
+
+### Changed
+- **In-Memory Storage for Local Mode**: Replaced IndexedDB with in-memory storage
+  - Errors are now stored in memory only (no database)
+  - Fresh session on every page load - perfect for development and debugging
+  - No initialization delays or database setup
+  - Faster performance
+
+### Added
+- **Error Deduplication**: Prevent duplicate error reports from frontend retries
+  - New `deduplicationWindow` configuration option (default: 60 seconds)
+  - Deduplication key: `endpoint:method:statusCode:team`
+  - Automatically prevents the same error from being reported multiple times within the window
+  - Works for both local and remote modes
+  - Automatic cleanup of old cache entries
+
+### Removed
+- IndexedDB dependency for local mode (still exported for backward compatibility)
+- `dbName` configuration is now unused but kept for backward compatibility
+
 ## [0.4.0] - 2025-10-07
 
 ### Changed
@@ -142,6 +163,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - MIT License included
 - Package configured for npm publishing as `@scalable-labs/sentinel`
 
+[0.5.0]: https://github.com/scalabledk/sentineljs/releases/tag/v0.5.0
 [0.4.0]: https://github.com/scalabledk/sentineljs/releases/tag/v0.4.0
 [0.3.0]: https://github.com/scalabledk/sentineljs/releases/tag/v0.3.0
 [0.2.2]: https://github.com/scalabledk/sentineljs/releases/tag/v0.2.2

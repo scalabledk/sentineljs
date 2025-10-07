@@ -102,6 +102,14 @@ export interface SentinelConfig {
    * Headers will be included in error reports if present
    */
   captureHeaders?: string[];
+
+  /**
+   * Deduplication window in milliseconds (default: 60000)
+   * Errors with the same endpoint, method, status code, and team within this window will be deduplicated
+   * Set to 0 to disable deduplication
+   * Example: 30000 (30 seconds), 120000 (2 minutes)
+   */
+  deduplicationWindow?: number;
 }
 
 export interface ErrorBatch {

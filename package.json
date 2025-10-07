@@ -1,6 +1,6 @@
 {
   "name": "@scalable-labs/sentinel",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Frontend error monitoring and tracking client with local storage, Microsoft Teams integration, and visual error viewer",
   "main": "dist/index.js",
   "module": "dist/index.js",

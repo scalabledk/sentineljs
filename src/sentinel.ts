@@ -1,5 +1,4 @@
 import { SentinelConfig, ErrorEvent, ErrorBatch } from './types';
-import { IndexedDBStorage } from './storage/indexeddb';
 import { ErrorUI } from './ui/error-ui';
 
 export class SentinelClient {
@@ -13,6 +12,7 @@ export class SentinelClient {
       | 'teamsChannelUrl'
       | 'teamsButtonLabel'
       | 'captureHeaders'
+      | 'deduplicationWindow'
     >
   > & {
     backendUrl?: string;
@@ -22,10 +22,12 @@ export class SentinelClient {
     teamsChannelUrl?: string;
     teamsButtonLabel?: string;
     captureHeaders?: string[];
+    deduplicationWindow?: number;
   };
   private errorQueue: ErrorEvent[] = [];
   private batchTimer: ReturnType<typeof setTimeout> | null = null;
-  private storage: IndexedDBStorage | null = null;
+  private localErrors: ErrorEvent[] = []; // In-memory storage for local mode
+  private deduplicationCache: Map<string, number> = new Map(); // Cache for deduplication
   private ui: ErrorUI | null = null;
 
   constructor(config: SentinelConfig) {
@@ -44,6 +46,7 @@ export class SentinelClient {
       teamsChannelUrl: config.teamsChannelUrl,
       teamsButtonLabel: config.teamsButtonLabel,
       captureHeaders: config.captureHeaders,
+      deduplicationWindow: config.deduplicationWindow ?? 60000, // 60 seconds default
     };
 
     // Validate remote mode configuration
@@ -56,23 +59,9 @@ export class SentinelClient {
       }
     }
 
-    // Initialize IndexedDB storage for local mode
-    if (this.config.mode === 'local' && typeof window !== 'undefined') {
-      this.initStorage();
-    }
-
     // Initialize UI for local mode if enabled
     if (this.config.mode === 'local' && this.config.showUI && typeof window !== 'undefined') {
       this.initUI();
-    }
-  }
-
-  private async initStorage(): Promise<void> {
-    try {
-      this.storage = new IndexedDBStorage(this.config.dbName, this.config.maxLocalErrors);
-      await this.storage.init();
-    } catch (error) {
-      console.error('[Sentinel] Failed to initialize IndexedDB:', error);
     }
   }
 
@@ -128,13 +117,29 @@ export class SentinelClient {
       return;
     }
 
+    // Check for duplicate errors using deduplication cache
+    const deduplicationKey = `${endpoint}:${method}:${statusCode}:${team}`;
+    const now = Date.now();
+    const lastReported = this.deduplicationCache.get(deduplicationKey);
+
+    if (lastReported && now - lastReported < (this.config.deduplicationWindow ?? 60000)) {
+      // Error was reported within the deduplication window, skip it
+      return;
+    }
+
+    // Update deduplication cache
+    this.deduplicationCache.set(deduplicationKey, now);
+
+    // Clean up old entries from deduplication cache
+    this.cleanupDeduplicationCache();
+
     const username = this.config.getUserName();
 
     const error: ErrorEvent = {
       endpoint,
       method,
       statusCode,
-      timestamp: Date.now(),
+      timestamp: now,
       team,
       ...(username && { username }),
       ...(responsePayload && { responsePayload }),
@@ -142,7 +147,7 @@ export class SentinelClient {
     };
 
     if (this.config.mode === 'local') {
-      // Store in IndexedDB
+      // Store in memory
       this.storeErrorLocally(error);
 
       // Show UI button if it exists and is hidden
@@ -164,18 +169,29 @@ export class SentinelClient {
   }
 
   /**
-   * Store error in IndexedDB (local mode)
+   * Clean up old entries from deduplication cache
    */
-  private async storeErrorLocally(error: ErrorEvent): Promise<void> {
-    if (!this.storage) {
-      console.error('[Sentinel] Storage not initialized');
-      return;
-    }
+  private cleanupDeduplicationCache(): void {
+    const now = Date.now();
+    const window = this.config.deduplicationWindow ?? 60000;
 
-    try {
-      await this.storage.storeError(error);
-    } catch (err) {
-      console.error('[Sentinel] Failed to store error locally:', err);
+    for (const [key, timestamp] of this.deduplicationCache.entries()) {
+      if (now - timestamp > window) {
+        this.deduplicationCache.delete(key);
+      }
+    }
+  }
+
+  /**
+   * Store error in memory (local mode)
+   */
+  private storeErrorLocally(error: ErrorEvent): void {
+    this.localErrors.push(error);
+
+    // Enforce max errors limit
+    if (this.localErrors.length > this.config.maxLocalErrors) {
+      // Remove oldest errors
+      this.localErrors = this.localErrors.slice(-this.config.maxLocalErrors);
     }
   }
 
@@ -183,31 +199,22 @@ export class SentinelClient {
    * Get all locally stored errors
    */
   async getLocalErrors(): Promise<ErrorEvent[]> {
-    if (this.config.mode !== 'local' || !this.storage) {
+    if (this.config.mode !== 'local') {
       return [];
     }
 
-    try {
-      return await this.storage.getAllErrors();
-    } catch (err) {
-      console.error('[Sentinel] Failed to retrieve local errors:', err);
-      return [];
-    }
+    return [...this.localErrors]; // Return a copy
   }
 
   /**
    * Clear all locally stored errors
    */
   async clearLocalErrors(): Promise<void> {
-    if (this.config.mode !== 'local' || !this.storage) {
+    if (this.config.mode !== 'local') {
       return;
     }
 
-    try {
-      await this.storage.clearAll();
-    } catch (err) {
-      console.error('[Sentinel] Failed to clear local errors:', err);
-    }
+    this.localErrors = [];
   }
 
   /**
@@ -443,11 +450,11 @@ export class SentinelClient {
       this.ui = null;
     }
 
-    // Clean up storage
-    if (this.storage) {
-      this.storage.close();
-      this.storage = null;
-    }
+    // Clear in-memory storage
+    this.localErrors = [];
+
+    // Clear deduplication cache
+    this.deduplicationCache.clear();
 
     // Clean up batch timer
     this.clearBatchTimer();
