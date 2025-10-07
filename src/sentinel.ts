@@ -146,7 +146,8 @@ export class SentinelClient {
         lastReported: lastReported ? new Date(lastReported).toISOString() : 'never',
         timeSinceLastReport: lastReported ? now - lastReported : 'n/a',
         window: this.config.deduplicationWindow,
-        isDuplicate: lastReported ? now - lastReported < (this.config.deduplicationWindow ?? 60000) : false,
+        isDuplicate:
+          lastReported && now - lastReported < (this.config.deduplicationWindow ?? 60000),
       });
     }
 

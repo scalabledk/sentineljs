@@ -19,8 +19,14 @@ export function installFetchInterceptor(sentinel: SentinelClient): void {
       // Report errors (4xx and 5xx)
       if (response.status >= 400) {
         try {
-          const url =
-            typeof input === 'string' ? input : input instanceof Request ? input.url : String(input);
+          let url: string;
+          if (typeof input === 'string') {
+            url = input;
+          } else if (input instanceof Request) {
+            url = input.url;
+          } else {
+            url = String(input);
+          }
           const method = init?.method || 'GET';
 
           // Try to get response payload
@@ -62,8 +68,14 @@ export function installFetchInterceptor(sentinel: SentinelClient): void {
     } catch (error) {
       // Network error or other fetch failure
       try {
-        const url =
-          typeof input === 'string' ? input : input instanceof Request ? input.url : String(input);
+        let url: string;
+        if (typeof input === 'string') {
+          url = input;
+        } else if (input instanceof Request) {
+          url = input.url;
+        } else {
+          url = String(input);
+        }
         const method = init?.method || 'GET';
         const endpoint = extractEndpoint(url);
 
