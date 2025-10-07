@@ -1,6 +1,6 @@
 {
   "name": "@scalable-labs/sentinel",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Frontend error monitoring and tracking client with local storage, Microsoft Teams integration, and visual error viewer",
   "main": "dist/index.js",
   "module": "dist/index.js",
@@ -21,15 +21,17 @@
   },
   "files": [
     "dist",
+    "legacy",
     "README.md",
     "LICENSE",
     "CHANGELOG.md",
     "LEGACY.md"
   ],
   "scripts": {
-    "build": "npm run build:modern && npm run build:legacy",
+    "build": "npm run build:modern && npm run build:legacy && npm run postbuild",
     "build:modern": "tsc",
     "build:legacy": "rollup -c",
+    "postbuild": "cp legacy-package.json legacy/package.json",
     "watch": "tsc --watch",
     "prepublishOnly": "npm run build",
     "test": "echo \"Error: no test specified\" && exit 1",

@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.1] - 2025-10-07
+
+### Fixed
+- **Legacy Import Path**: Fixed module resolution for `@scalable-labs/sentinel/legacy` import
+  - Added `legacy/package.json` to properly resolve CommonJS module
+  - Now works with `require('@scalable-labs/sentinel/legacy')` without needing full path
+  - Compatible with older module resolution systems (Webpack 4, older Node.js)
+
 ## [0.5.0] - 2025-10-07
 
 ### Changed
@@ -163,6 +171,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - MIT License included
 - Package configured for npm publishing as `@scalable-labs/sentinel`
 
+[0.5.1]: https://github.com/scalabledk/sentineljs/releases/tag/v0.5.1
 [0.5.0]: https://github.com/scalabledk/sentineljs/releases/tag/v0.5.0
 [0.4.0]: https://github.com/scalabledk/sentineljs/releases/tag/v0.4.0
 [0.3.0]: https://github.com/scalabledk/sentineljs/releases/tag/v0.3.0
