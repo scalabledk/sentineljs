@@ -22,7 +22,8 @@
     "dist",
     "README.md",
     "LICENSE",
-    "CHANGELOG.md"
+    "CHANGELOG.md",
+    "LEGACY.md"
   ],
   "scripts": {
     "build": "npm run build:modern && npm run build:legacy",
