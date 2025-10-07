@@ -66,8 +66,29 @@ export class ErrorUI {
       return;
     }
 
-    // Create toggle button
+    // Create toggle button (hidden by default)
     this.createToggleButton();
+    this.hide();
+  }
+
+  /**
+   * Show the UI button
+   */
+  show(): void {
+    const container = document.getElementById('sentinel-ui-toggle-container');
+    if (container) {
+      container.style.display = 'flex';
+    }
+  }
+
+  /**
+   * Hide the UI button
+   */
+  hide(): void {
+    const container = document.getElementById('sentinel-ui-toggle-container');
+    if (container) {
+      container.style.display = 'none';
+    }
   }
 
   /**
@@ -562,7 +583,8 @@ export class ErrorUI {
             await this.clearCallback();
           }
           this.closeUI();
-          await this.openUI();
+          // Hide the button since there are no more errors
+          this.hide();
         }
       });
     }

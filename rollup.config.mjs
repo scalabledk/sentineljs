@@ -12,15 +12,16 @@ export default [
     input: 'src/index-legacy.ts',
     output: [
       {
-        file: 'dist/legacy/sentinel.umd.js',
+        file: 'dist/legacy/index.umd.js',
         format: 'umd',
         name: 'Sentinel',
         sourcemap: true,
       },
       {
-        file: 'dist/legacy/sentinel.cjs.js',
+        file: 'dist/legacy/index.cjs',
         format: 'cjs',
         sourcemap: true,
+        exports: 'named',
       },
     ],
     plugins: [
@@ -40,7 +41,7 @@ export default [
   {
     input: 'src/index.ts',
     output: {
-      file: 'dist/legacy/sentinel.d.ts',
+      file: 'dist/legacy/index.d.ts',
       format: 'es',
     },
     plugins: [dts()],

@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2025-10-07
+
+### Added
+- **Selective Error Capture**: Only capture errors for endpoints defined in team mappings
+  - Unmapped endpoints are now ignored, preventing noise from unknown API calls
+  - Errors are only tracked when endpoint matches a team mapping pattern
+
+### Changed
+- **Conditional UI Visibility**: Error viewer UI now only appears when errors are present
+  - UI button hidden by default on initialization
+  - UI button automatically shown when first error is captured
+  - UI button hidden when all errors are cleared
+  - On page reload, button shows only if stored errors exist
+
+## [0.2.2] - 2025-10-07
+
+### Fixed
+- **Legacy Build File Extensions**: Fixed file naming and extensions for proper CommonJS module resolution
+  - Changed output files from `sentinel.cjs.js` to `index.cjs` (proper CommonJS extension)
+  - Changed UMD output from `sentinel.umd.js` to `index.umd.js`
+  - Changed TypeScript declarations from `sentinel.d.ts` to `index.d.ts`
+  - Added `exports: 'named'` to CommonJS output configuration
+  - Now works correctly with `require('@scalable-labs/sentinel/legacy')` in Webpack 4 and older bundlers
+
 ## [0.2.1] - 2025-10-07
 
 ### Fixed
@@ -106,6 +130,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - MIT License included
 - Package configured for npm publishing as `@scalable-labs/sentinel`
 
+[0.3.0]: https://github.com/scalabledk/sentineljs/releases/tag/v0.3.0
+[0.2.2]: https://github.com/scalabledk/sentineljs/releases/tag/v0.2.2
 [0.2.1]: https://github.com/scalabledk/sentineljs/releases/tag/v0.2.1
 [0.2.0]: https://github.com/scalabledk/sentineljs/releases/tag/v0.2.0
 [0.1.1]: https://github.com/scalabledk/sentineljs/releases/tag/v0.1.1

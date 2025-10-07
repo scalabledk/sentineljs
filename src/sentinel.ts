@@ -68,7 +68,7 @@ export class SentinelClient {
     }
   }
 
-  private initUI(): void {
+  private async initUI(): Promise<void> {
     try {
       this.ui = new ErrorUI({
         position: this.config.uiPosition,
@@ -86,6 +86,12 @@ export class SentinelClient {
       });
 
       this.ui.init();
+
+      // Check if there are existing errors and show UI if there are
+      const errors = await this.getLocalErrors();
+      if (errors.length > 0) {
+        this.ui.show();
+      }
     } catch (error) {
       console.error('[Sentinel] Failed to initialize UI:', error);
     }
@@ -106,6 +112,13 @@ export class SentinelClient {
     }
 
     const team = this.getTeamForEndpoint(endpoint);
+
+    // Only capture errors for endpoints that match team mappings
+    // Skip if team is default team (no mapping found)
+    if (team === this.config.defaultTeam) {
+      return;
+    }
+
     const username = this.config.getUserName();
 
     const error: ErrorEvent = {
@@ -122,6 +135,11 @@ export class SentinelClient {
     if (this.config.mode === 'local') {
       // Store in IndexedDB
       this.storeErrorLocally(error);
+
+      // Show UI button if it exists and is hidden
+      if (this.ui) {
+        this.ui.show();
+      }
     } else {
       // Queue for remote batch sending
       this.errorQueue.push(error);
